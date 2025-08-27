@@ -1,0 +1,121 @@
+/* ===== 曉日制作 Header Logo 動畫效果 ===== */
+
+/* 基礎 header 樣式重置 */
+#main-header {
+    position: sticky !important;
+    top: 0;
+    z-index: 999999;
+    transition: padding 2000ms cubic-bezier(0.23, 1, 0.32, 1);
+    background-color: #ffffff;
+}
+
+/* Logo 容器設定 */
+.et-fixed-header #logo,
+#logo {
+    position: relative;
+    transition: all 2500ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+/* 主要 Logo 圖片 */
+#logo img {
+    transition: all 2500ms cubic-bezier(0.23, 1, 0.32, 1);
+    max-height: none !important;
+    height: auto !important;
+}
+
+/* 小版本 Logo (隱藏狀態) */
+#logo::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 212px;
+    height: auto;
+    background-image: url('https://likesunny.com/wp-content/uploads/2025/07/【曉日制作】標誌組合_G3.svg');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    opacity: 0;
+    transition: opacity 800ms ease-in-out;
+    pointer-events: none;
+    z-index: 10;
+    min-height: 60px; /* 確保有高度 */
+}
+
+/* 漢堡選單初始隱藏 */
+.et_mobile_menu,
+#et-top-navigation {
+    opacity: 0;
+    transition: opacity 800ms ease-in-out;
+    pointer-events: none;
+}
+
+/* 首頁初始狀態 - 大 Logo */
+.home #main-header {
+    padding: 50px 0 !important;
+}
+
+.home #logo img {
+    width: 80vw !important;
+    max-width: none !important;
+    height: auto !important;
+}
+
+/* 英文 Logo 顏色調整 */
+.home #logo img[src*="Logo_eng.svg"] {
+    filter: brightness(0) saturate(100%) invert(46%) sepia(9%) saturate(462%) hue-rotate(64deg) brightness(95%) contrast(91%);
+}
+
+/* 動畫觸發後狀態 */
+.logo-animated #main-header {
+    padding: 20px 0 !important;
+}
+
+.logo-animated #logo img {
+    width: 212px !important;
+    opacity: 0;
+}
+
+.logo-animated #logo::after {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.logo-animated .et_mobile_menu,
+.logo-animated #et-top-navigation {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* 響應式調整 */
+@media (max-width: 768px) {
+    .home #logo img {
+        width: 90vw !important;
+    }
+    
+    .logo-animated #logo::after {
+        width: 180px;
+    }
+}
+
+@media (max-width: 480px) {
+    .home #logo img {
+        width: 95vw !important;
+    }
+    
+    .logo-animated #logo::after {
+        width: 150px;
+    }
+}
+
+/* 確保動畫不受 Divi 預設樣式干擾 */
+.et-fixed-header #logo {
+    max-height: none !important;
+    height: auto !important;
+}
+
+.et-fixed-header #logo img {
+    max-height: none !important;
+    height: auto !important;
+}
