@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en" class="homepage-ready">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Header Logo Animation Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+        }
+
+        .header-wrap {
+            position: sticky;
+            top: 0;
+            display: block;
+            width: 100%;
+            height: auto;
+            background-color: #ffffff;
+            padding: 20px 0;
+            z-index: 1002;
+            transition: padding 2000ms cubic-bezier(0.23, 1, 0.32, 1);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .outer-content-wrap {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .logo-column {
+            position: relative;
+            display: block;
+            z-index: 1;
+        }
+        
+        .logo-column img {
+            position: relative;
+            display: block;
+            width: 212px;
+            height: auto;
+            min-width: 212px;
+            max-width: 100%;
+            margin: 0 auto;
+            transition: width 2500ms cubic-bezier(0.23, 1, 0.32, 1), opacity 800ms ease-in-out;
+        }
+
+        .logo-column img.logo-main {
+            filter: brightness(0) saturate(100%) invert(46%) sepia(9%) saturate(462%) hue-rotate(64deg) brightness(95%) contrast(91%);
+        }
+
+        .logo-column .logo-small {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 212px;
+            height: auto;
+            opacity: 0;
+            transition: opacity 800ms ease-in-out;
+            pointer-events: none;
+        }
+
+        .menu-opener {
+            position: absolute;
+            width: 30px;
+            height: 16px;
+            top: 50%;
+            right: 20px;
+            transform: translateY(-50%);
+            cursor: pointer;
+            z-index: 3;
+            opacity: 0;
+            transition: opacity 800ms ease-in-out;
+            pointer-events: none;
+        }
+
+        .menu-opener::before,
+        .menu-opener::after {
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 3px;
+            background-color: #000;
+            transition: transform 250ms cubic-bezier(0.25, 0.1, 0.25, 1);
+        }
+
+        .menu-opener::before {
+            top: 0;
+        }
+
+        .menu-opener::after {
+            bottom: 0;
+        }
+
+        /* Logo animation states */
+        html.homepage-ready .header-wrap.normal-header {
+            padding: 50px 0;
+            transition: padding 2000ms cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        html.homepage-ready .header-wrap.normal-header .logo-column img {
+            width: 80vw;
+            max-width: none;
+            transition: width 2500ms cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        /* Logo fade transition states */
+        html.logo-transitioning .logo-column img.logo-main {
+            opacity: 0;
+        }
+
+        html.logo-transitioning .logo-column .logo-small {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        html.logo-transitioning .menu-opener {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* Demo content styles */
+        .hero-section {
+            height: 500vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+        }
+
+        .hero-content h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+
+        .hero-content p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="header-wrap normal-header">
+        <div class="outer-content-wrap">
+            <div class="logo-column">
+                <img class="logo-main" src="https://likesunny.com/wp-content/uploads/2025/08/Logo_eng.svg" alt="Logo">
+                <img class="logo-small" src="https://likesunny.com/wp-content/uploads/2025/07/【曉日制作】標誌組合_G3.svg" alt="Logo Small">
+            </div>
+            <div class="menu-opener"></div>
+        </div>
+    </div>
+
+    <div class="hero-section">
+        <div class="hero-content">
+            <h1>Header Logo Animation Demo</h1>
+            <p>Scroll down to see the logo shrink animation</p>
+            <p style="font-size: 2rem;">↓</p>
+        </div>
+    </div>
+
+    <script>
+        // Logo animation state
+        let hasTriggered = false;
+        let isAnimating = false;
+        let logoTransitionTimeout = null;
+        
+        function triggerLogoAnimation() {
+            if (hasTriggered || isAnimating) return;
+            
+            hasTriggered = true;
+            isAnimating = true;
+            
+            const html = document.documentElement;
+            
+            // Remove scroll listener to prevent interruption
+            window.removeEventListener('scroll', scrollHandler);
+            
+            // Start size animation
+            html.classList.remove('homepage-ready');
+            
+            // Wait for the size animation to complete, then fade logos
+            logoTransitionTimeout = setTimeout(() => {
+                html.classList.add('logo-transitioning');
+                
+                // Mark animation as complete after fade transition
+                setTimeout(() => {
+                    isAnimating = false;
+                }, 800); // Match the opacity transition duration
+                
+            }, 2500); // Match the logo width transition duration
+        }
+        
+        function handleScroll() {
+            if (hasTriggered || isAnimating) return;
+            
+            const scrollY = window.scrollY;
+            const headerHeight = document.querySelector('.header-wrap').offsetHeight;
+            
+            // Trigger one-time animation when scrolled past header height
+            if (scrollY > headerHeight) {
+                triggerLogoAnimation();
+            }
+        }
+        
+        // Add scroll event listener with throttling for performance
+        let ticking = false;
+        
+        function scrollHandler() {
+            if (!ticking) {
+                requestAnimationFrame(handleScroll);
+                ticking = true;
+                setTimeout(() => ticking = false, 16); // ~60fps throttling
+            }
+        }
+        
+        window.addEventListener('scroll', scrollHandler);
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Header logo animation demo loaded - one-time animation only');
+        });
+    </script>
+</body>
+</html>
