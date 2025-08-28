@@ -6,53 +6,89 @@
     <title>Header Logo Animation Demo</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: Arial, sans-serif; line-height: 1.6; }
+        body { font-family: Arial, sans-serif; line-height: 1.6; background: white; }
 
-        .header-wrap {
-            position: sticky;
+        #likesunny-animation-header {
+            position: fixed;
             top: 0;
-            background: #fff;
-            padding: 46px 0;
-            z-index: 1002;
-            transition: opacity 0.6s ease, transform 0.6s ease, padding 2s ease-out;
-            box-shadow: 0px 4px 18px -6px rgba(0,0,0,0.3);
-        }
-        .header-wrap.shrunken { padding: 24px 0; }
-        .header-wrap.hidden { 
-            opacity: 0; 
-            pointer-events: none; 
-        }
-
-        .outer-content-wrap {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        .logo-column {
-            position: relative;
-            width: 80vw;
-            transition: width 2s ease-out;
-            will-change: width;
-            backface-visibility: hidden;
-            transform: translateZ(0);
-        }
-        .logo-column.shrink { width: 302px; }
-
-        .logo-column img {
-            display: block;
+            left: 0;
             width: 100%;
-            margin: 0 auto;
-            transition: opacity 0.6s ease;
-            will-change: transform, opacity;
-            backface-visibility: hidden;
-            transform: translateZ(0);
+            z-index: 999999;
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            height: 216px !important;
+            overflow: hidden !important;
+            display: none;
         }
-        .logo-column img.logo-main {
-            filter: brightness(0) saturate(100%) invert(46%) sepia(9%) saturate(462%) hue-rotate(64deg) brightness(95%) contrast(91%);
+
+        #likesunny-animation-header[style*="display: block"] {
+            display: block !important;
+        }
+
+        #likesunny-animation-header .likesunny-header-wrap {
+            background: #fff !important;
+            padding: 46px 0 !important;
+            transition: opacity 0.6s ease, padding 2s ease-out !important;
+            box-shadow: 0px 4px 18px -6px rgba(0,0,0,0.3) !important;
+        }
+
+        #likesunny-animation-header .likesunny-header-wrap.shrunken { 
+            padding: 24px 0 !important; 
+        }
+
+        #likesunny-animation-header .likesunny-header-wrap.hidden { 
+            opacity: 0 !important; 
+            pointer-events: none !important; 
+        }
+
+        #likesunny-animation-header .likesunny-outer-content-wrap {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            width: 100% !important;
+            margin: 0 auto !important;
+            padding: 0 20px !important;
+            max-width: none !important;
+            height: auto !important;
+            max-height: none !important;
+        }
+
+        #likesunny-animation-header .likesunny-logo-column {
+            position: relative !important;
+            width: min(80vw, 800px) !important;
+            transition: width 2s ease-out !important;
+            will-change: width !important;
+            backface-visibility: hidden !important;
+            transform: translateZ(0) !important;
+        }
+
+        #likesunny-animation-header .likesunny-logo-column.shrink { 
+            width: 302px !important; 
+        }
+
+        #likesunny-animation-header .likesunny-logo-column img {
+            display: block !important;
+            width: 100% !important;
+            max-height: 124px !important;
+            margin: 0 auto !important;
+            transition: opacity 0.6s ease !important;
+            will-change: transform, opacity !important;
+            backface-visibility: hidden !important;
+            transform: translateZ(0) !important;
+            object-fit: contain !important;
+        }
+
+        #likesunny-animation-header .likesunny-logo-column img.likesunny-logo-main {
+            filter: brightness(0) saturate(100%) invert(46%) sepia(9%) saturate(462%) hue-rotate(64deg) brightness(95%) contrast(91%) !important;
+        }
+
+        .likesunny-animation-complete #likesunny-animation-header {
+            display: none !important;
+            pointer-events: none !important;
+        }
+
+        #likesunny-animation-header[style*="display: none"] {
+            pointer-events: none !important;
         }
 
 
@@ -68,13 +104,55 @@
         }
         .hero-content h1 { font-size: 3rem; margin-bottom: 20px; }
         .hero-content p { font-size: 1.2rem; margin-bottom: 30px; }
+
+        @media (max-width: 768px) {
+            #likesunny-animation-header .likesunny-logo-column {
+                width: 90vw !important;
+            }
+            
+            #likesunny-animation-header .likesunny-logo-column.shrink { 
+                width: 250px !important; 
+            }
+            
+            #likesunny-animation-header .likesunny-header-wrap {
+                padding: 30px 0 !important;
+            }
+            
+            #likesunny-animation-header .likesunny-header-wrap.shrunken { 
+                padding: 15px 0 !important; 
+            }
+            
+            #likesunny-animation-header .likesunny-outer-content-wrap {
+                padding: 0 15px !important;
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="header-wrap">
-        <div class="outer-content-wrap">
-            <div class="logo-column">
-                <img class="logo-main" src="images/logo-large.svg" alt="Logo">
+    <div id="likesunny-animation-header" style="display: none;">
+        <script>
+        (function() {
+            var shouldShow = false;
+            var isReload = (performance.navigation && performance.navigation.type === 1);
+            if (isReload) {
+                sessionStorage.removeItem('likesunny_animation_shown');
+                shouldShow = true;
+            } else if (!sessionStorage.getItem('likesunny_animation_shown')) {
+                shouldShow = true;
+            }
+            if (shouldShow) {
+                var animationHeader = document.getElementById('likesunny-animation-header');
+                if (animationHeader) {
+                    animationHeader.style.display = 'block';
+                }
+            }
+        })();
+        </script>
+        <div class="likesunny-header-wrap">
+            <div class="likesunny-outer-content-wrap">
+                <div class="likesunny-logo-column">
+                    <img class="likesunny-logo-main" src="images/logo-large.svg" alt="Logo">
+                </div>
             </div>
         </div>
     </div>
@@ -88,40 +166,64 @@
     </div>
 
     <script>
-        let hasTriggered = false, isAnimating = false;
-        
-        function triggerAnimation() {
-            if (hasTriggered || isAnimating) return;
-            hasTriggered = true;
-            isAnimating = true;
+        document.addEventListener('DOMContentLoaded', function() {
+            if (document.getElementById('likesunny-animation-header').style.display !== 'block') {
+                return;
+            }
             
-            const [header, logoColumn] = ['.header-wrap', '.logo-column'].map(s => document.querySelector(s));
+            let hasTriggered = false, isAnimating = false;
             
-            window.removeEventListener('scroll', scrollHandler);
-            logoColumn.classList.add('shrink');
-            header.classList.add('shrunken');
+            function triggerAnimation() {
+                if (hasTriggered || isAnimating) return;
+                hasTriggered = true;
+                isAnimating = true;
+                
+                const header = document.querySelector('#likesunny-animation-header .likesunny-header-wrap');
+                const logoColumn = document.querySelector('#likesunny-animation-header .likesunny-logo-column');
+                
+                if (!header || !logoColumn) return;
+                
+                window.removeEventListener('scroll', scrollHandler);
+                
+                logoColumn.classList.add('shrink');
+                header.classList.add('shrunken');
+                
+                setTimeout(() => {
+                    header.classList.add('hidden');
+                    isAnimating = false;
+                    
+                    setTimeout(() => {
+                        document.getElementById('likesunny-animation-header').style.display = 'none';
+                        document.body.classList.add('likesunny-animation-complete');
+                    }, 1000);
+                    
+                    sessionStorage.setItem('likesunny_animation_shown', 'true');
+                }, 3000);
+            }
+            
+            function handleScroll() {
+                if (!hasTriggered && !isAnimating && window.scrollY > 320) {
+                    triggerAnimation();
+                }
+            }
+            
+            let ticking = false;
+            function scrollHandler() {
+                if (!ticking) {
+                    requestAnimationFrame(handleScroll);
+                    ticking = true;
+                    setTimeout(() => ticking = false, 16);
+                }
+            }
+            
+            window.addEventListener('scroll', scrollHandler);
             
             setTimeout(() => {
-                header.classList.add('hidden');
-                isAnimating = false;
+                if (!hasTriggered) {
+                    triggerAnimation();
+                }
             }, 3000);
-        }
-        
-        function handleScroll() {
-            if (!hasTriggered && !isAnimating && window.scrollY > 320) triggerAnimation();
-        }
-        
-        let ticking = false;
-        function scrollHandler() {
-            if (!ticking) {
-                requestAnimationFrame(handleScroll);
-                ticking = true;
-                setTimeout(() => ticking = false, 16);
-            }
-        }
-        
-        window.addEventListener('scroll', scrollHandler);
-        document.addEventListener('DOMContentLoaded', () => setTimeout(() => !hasTriggered && triggerAnimation(), 3000));
+        });
     </script>
 </body>
 </html>
