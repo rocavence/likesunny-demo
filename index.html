@@ -14,10 +14,14 @@
             background: #fff;
             padding: 46px 0;
             z-index: 1002;
-            transition: padding 2s ease-out;
+            transition: opacity 0.6s ease, transform 0.6s ease, padding 2s ease-out;
             box-shadow: 0px 4px 18px -6px rgba(0,0,0,0.3);
         }
         .header-wrap.shrunken { padding: 24px 0; }
+        .header-wrap.hidden { 
+            opacity: 0; 
+            pointer-events: none; 
+        }
 
         .outer-content-wrap {
             display: flex;
@@ -50,19 +54,6 @@
         .logo-column img.logo-main {
             filter: brightness(0) saturate(100%) invert(46%) sepia(9%) saturate(462%) hue-rotate(64deg) brightness(95%) contrast(91%);
         }
-        .logo-column img.logo-small {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 302px;
-            height: 32px;
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        .logo-column.logo-transitioning img.logo-main { opacity: 0; }
-        .logo-column.logo-transitioning img.logo-small { opacity: 1; pointer-events: auto; }
 
 
         .hero-section {
@@ -84,7 +75,6 @@
         <div class="outer-content-wrap">
             <div class="logo-column">
                 <img class="logo-main" src="images/logo-large.svg" alt="Logo">
-                <img class="logo-small" src="images/logo-small.svg" alt="Logo Small">
             </div>
         </div>
     </div>
@@ -112,7 +102,7 @@
             header.classList.add('shrunken');
             
             setTimeout(() => {
-                logoColumn.classList.add('logo-transitioning');
+                header.classList.add('hidden');
                 isAnimating = false;
             }, 3000);
         }
