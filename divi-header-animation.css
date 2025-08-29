@@ -74,7 +74,7 @@
 #likesunny-animation-header .likesunny-logo-column img {
     display: block !important;
     width: 100% !important;
-    height: auto !important; /* 高度自動，保持比例 */
+    max-height: 248px !important;
     margin: 0 auto !important;
     transition: opacity 0.6s ease !important;
     will-change: transform, opacity !important;
