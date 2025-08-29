@@ -49,12 +49,13 @@
         .scroll-logo {
             display: block;
             height: auto;
-            transition: all 0.3s ease-out, opacity 2s ease-out;
+            transition: all 0.3s ease-out;
             object-fit: contain;
         }
         
-        .scroll-logo.fade-out {
+        .scroll-header.fade-out {
             opacity: 0;
+            transition: all 0.3s ease-out, opacity 2s ease-out;
         }
         
         .scroll-logo-main {
@@ -193,7 +194,7 @@
             <li>✓ Proportional logo scaling</li>
             <li>✓ Logo vertical centering</li>
             <li>✓ 2x header height = 80px final</li>
-            <li>✓ 2-second logo fade out</li>
+            <li>✓ 2-second header fade out</li>
             <li>✓ Smooth CSS transitions</li>
             <li>✓ No aspect ratio distortion</li>
         </ul>
@@ -328,7 +329,7 @@
                 
                 if (progress < 1) {
                     this.hasTriggeredFadeOut = false;
-                    this.logo.classList.remove('fade-out');
+                    this.header.classList.remove('fade-out');
                 }
                 
                 this.handleScroll(); // Re-apply current scroll position
@@ -337,10 +338,10 @@
             triggerLogoFadeOut() {
                 this.hasTriggeredFadeOut = true;
                 
-                // Add fade out class to trigger 2-second fade out animation
-                this.logo.classList.add('fade-out');
+                // Add fade out class to header to trigger 2-second fade out animation
+                this.header.classList.add('fade-out');
                 
-                console.log('Logo fade out triggered');
+                console.log('Header fade out triggered');
             }
             
             easeOutCubic(t) {
