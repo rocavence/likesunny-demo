@@ -76,13 +76,26 @@
         // 初始設置
         updateMainAreaPosition();
         
-        // 動畫完成時停止監控
-        const checkComplete = setInterval(() => {
+        // 監控動畫狀態，第一階段完成後停止監控
+        let monitoringActive = true;
+        
+        const checkPhase = setInterval(() => {
+            const header = document.querySelector('.likesunny-header-wrap');
+            if (header && header.classList.contains('shrunken') && monitoringActive) {
+                // 等待2秒讓縮小動畫完成
+                setTimeout(() => {
+                    resizeObserver.disconnect();
+                    monitoringActive = false;
+                    clearInterval(checkPhase);
+                    console.log('LikeSunny: Stopped height monitoring after first phase');
+                }, 2000);
+            }
+            
+            // 備用：完全動畫完成時也停止監控
             if (document.body.classList.contains('likesunny-animation-complete')) {
                 resizeObserver.disconnect();
-                clearInterval(checkComplete);
-                // 恢復原始位置
-                mainArea.style.marginTop = '0px';
+                monitoringActive = false;
+                clearInterval(checkPhase);
             }
         }, 100);
     }
@@ -125,6 +138,15 @@
         // 第一階段：縮小 logo
         logoColumn.classList.add('shrink');
         header.classList.add('shrunken');
+        
+        // 2秒後第一階段完成，et-main-area 應該回到 0 位置
+        setTimeout(() => {
+            const mainArea = document.querySelector('#et-main-area');
+            if (mainArea) {
+                mainArea.style.marginTop = '0px';
+                console.log('LikeSunny: First animation phase complete, main area reset to 0');
+            }
+        }, 2000);
         
         // 第二階段：3秒後隱藏 header，顯示原有 header
         setTimeout(() => {
