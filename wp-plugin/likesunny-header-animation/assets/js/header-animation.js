@@ -30,6 +30,9 @@
         // 標記動畫已顯示
         markAnimationShown();
         
+        // 初始化 et-main-area 推送
+        initMainAreaPush();
+        
         // 3秒後自動開始動畫（如果沒有被滾動觸發）
         setTimeout(() => {
             if (!hasTriggered && !isAnimating) {
@@ -44,6 +47,59 @@
     
     function markAnimationShown() {
         sessionStorage.setItem('likesunny_animation_shown', 'true');
+    }
+    
+    function initMainAreaPush() {
+        const mainArea = document.querySelector('#et-main-area');
+        if (!mainArea) {
+            console.log('LikeSunny: et-main-area not found, skipping push functionality');
+            return;
+        }
+        
+        // 開始實時高度監控
+        startHeightMonitoring();
+    }
+    
+    function startHeightMonitoring() {
+        const animationHeader = document.querySelector('#likesunny-animation-header');
+        const mainArea = document.querySelector('#et-main-area');
+        
+        if (!animationHeader || !mainArea) return;
+        
+        // 使用 ResizeObserver 監控 header 高度變化
+        const resizeObserver = new ResizeObserver(() => {
+            updateMainAreaPosition();
+        });
+        
+        resizeObserver.observe(animationHeader);
+        
+        // 初始設置
+        updateMainAreaPosition();
+        
+        // 動畫完成時停止監控
+        const checkComplete = setInterval(() => {
+            if (document.body.classList.contains('likesunny-animation-complete')) {
+                resizeObserver.disconnect();
+                clearInterval(checkComplete);
+                // 恢復原始位置
+                mainArea.style.marginTop = '0px';
+            }
+        }, 100);
+    }
+    
+    function updateMainAreaPosition() {
+        const animationHeader = document.querySelector('#likesunny-animation-header');
+        const mainArea = document.querySelector('#et-main-area');
+        
+        if (!animationHeader || !mainArea) return;
+        
+        // 獲取當前 header 實際高度
+        const headerHeight = animationHeader.offsetHeight;
+        
+        // 設置 main area 的 margin-top 為當前 header 高度
+        mainArea.style.marginTop = headerHeight + 'px';
+        
+        console.log(`LikeSunny: Updated main area margin-top to ${headerHeight}px`);
     }
     
     function triggerAnimation() {

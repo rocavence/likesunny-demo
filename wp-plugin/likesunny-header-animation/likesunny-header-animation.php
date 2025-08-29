@@ -58,22 +58,9 @@ class LikeSunnyHeaderAnimation {
             z-index: 999999 !important;
         }
         
-        /* et-main-area 跟隨動畫 header 高度變化 */
+        /* et-main-area 跟隨動畫 header 高度變化（由JavaScript控制） */
         #et-main-area {
-            transition: margin-top 2s ease-out !important;
-            margin-top: 0 !important;
-        }
-        
-        /* 當動畫 header 顯示時，推送 main area 向下 */
-        body:not(.likesunny-animation-complete) #et-main-area {
-            margin-top: 20vh !important; /* 初始推送距離，配合動畫 header 高度 */
-        }
-        
-        /* Mobile 響應式 */
-        @media (max-width: 768px) {
-            body:not(.likesunny-animation-complete) #et-main-area {
-                margin-top: 24vh !important; /* Mobile 版本稍大一點 */
-            }
+            transition: margin-top 0.3s ease-out !important;
         }
         </style>
         <?php
