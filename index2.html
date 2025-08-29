@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LikeSunny Header Layout - Static Version</title>
+    <title>LikeSunny Header - New Scroll Effect</title>
     
     <style>
         /* Basic reset and layout styles only - NO ANIMATIONS */
@@ -19,60 +19,54 @@
             background: white; 
         }
 
-        /* Static Header Layout */
-        #likesunny-static-header {
-            position: relative;
+        /* New Scroll-Responsive Header */
+        .scroll-header {
+            position: sticky;
+            top: 0;
             width: 100%;
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
             background: #fff;
             box-shadow: 0px 4px 18px -6px rgba(0,0,0,0.3);
+            z-index: 1000;
+            transition: all 0.3s ease-out;
         }
         
-        .likesunny-header-wrap {
-            background: #fff;
-            padding: 5vh 0; /* 使用視窗高度的百分比 */
-        }
-        
-        .likesunny-outer-content-wrap {
+        .scroll-header-inner {
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 100%;
-            margin: 0 auto;
             padding: 0 20px;
-            max-width: none;
-            height: auto;
-            max-height: none;
+            transition: all 0.3s ease-out;
         }
         
-        .likesunny-logo-column {
-            position: relative;
-            width: 90vw; /* 使用視窗寬度的90% */
+        .scroll-logo-container {
+            transition: all 0.3s ease-out;
         }
         
-        .likesunny-logo-column img {
+        .scroll-logo {
             display: block;
-            width: 100%;
-            max-height: 248px;
-            margin: 0 auto;
+            height: auto;
+            transition: all 0.3s ease-out;
             object-fit: contain;
         }
         
-        .likesunny-logo-column img.likesunny-logo-main {
+        .scroll-logo-main {
             filter: brightness(0) saturate(100%) invert(46%) sepia(9%) saturate(462%) hue-rotate(64deg) brightness(95%) contrast(91%);
         }
         
         /* Content area */
         .content-section {
-            height: 200vh;
+            height: 300vh;
+            background: linear-gradient(to bottom, #f8f9fa, #e9ecef);
+            padding: 50px 20px;
+        }
+        
+        .content-block {
+            max-width: 800px;
+            margin: 0 auto 100px auto;
             background: white;
-            display: flex;
-            align-items: flex-start;
-            justify-content: center;
-            color: black;
-            text-align: center;
-            padding-top: 50px;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
         
         .content h1 { 
@@ -105,18 +99,18 @@
             position: fixed;
             bottom: 20px;
             right: 20px;
-            background: rgba(0,0,0,0.8);
+            background: rgba(0,0,0,0.9);
             color: white;
             padding: 15px;
             border-radius: 8px;
             font-size: 12px;
-            max-width: 300px;
-            z-index: 1000;
+            max-width: 350px;
+            z-index: 2000;
         }
         
         .demo-info h3 {
             margin-bottom: 10px;
-            color: #4CAF50;
+            color: #28a745;
         }
         
         .demo-info ul {
@@ -127,41 +121,212 @@
         .demo-info li {
             margin: 5px 0;
         }
+        
+        .scroll-debug {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+            z-index: 2000;
+        }
     </style>
 </head>
 <body>
-    <!-- Static Header -->
-    <div id="likesunny-static-header">
-        <div class="likesunny-header-wrap">
-            <div class="likesunny-outer-content-wrap">
-                <div class="likesunny-logo-column">
-                    <img class="likesunny-logo-main" src="images/logo-large.svg" alt="Logo">
-                </div>
+    <!-- New Scroll-Responsive Header -->
+    <header class="scroll-header" id="scrollHeader">
+        <div class="scroll-header-inner" id="scrollHeaderInner">
+            <div class="scroll-logo-container" id="scrollLogoContainer">
+                <img class="scroll-logo scroll-logo-main" id="scrollLogo" src="images/logo-large.svg" alt="Logo">
             </div>
         </div>
-    </div>
+    </header>
 
     <!-- Main Content -->
     <div class="content-section">
-        <div class="content">
-            <h1>LikeSunny Header Layout</h1>
-            <p>Static Version - Layout Only</p>
-            <p>This shows the header structure without any animations</p>
-            <p>Scroll down to see how the fixed header behaves</p>
+        <div class="content-block">
+            <h1>New Scroll-Based Header Effect</h1>
+            <p>Scroll down to see the header shrink proportionally</p>
+            <p>The logo maintains its aspect ratio while the header shrinks to 80px height</p>
+            <p>Effect completes after scrolling approximately 2x the initial header height</p>
         </div>
+        
+        <div class="content-block">
+            <h2>How it Works</h2>
+            <p>• Sticky positioning keeps header visible</p>
+            <p>• Scroll distance calculates shrinkage percentage</p>
+            <p>• Logo scales proportionally with header</p>
+            <p>• Smooth CSS transitions for fluid motion</p>
+        </div>
+        
+        <div class="content-block">
+            <h2>Continue Scrolling</h2>
+            <p>Keep scrolling to see the effect in action...</p>
+            <p>The header will maintain its compact size.</p>
+        </div>
+    </div>
+
+    <!-- Scroll Debug Info -->
+    <div class="scroll-debug" id="scrollDebug">
+        Scroll: 0px<br>
+        Progress: 0%<br>
+        Header Height: 0px
     </div>
 
     <!-- Demo info panel -->
     <div class="demo-info">
-        <h3>Static Layout Demo</h3>
+        <h3>New Scroll Effect Demo</h3>
         <ul>
-            <li>✓ Fixed header positioning</li>
-            <li>✓ Responsive design (90vw/95vw)</li>
-            <li>✓ 5vh/8vh padding</li>
-            <li>✓ 248px max logo height</li>
-            <li>✓ No animations or triggers</li>
-            <li>✓ Pure CSS layout</li>
+            <li>✓ Scroll-based header shrinking</li>
+            <li>✓ Proportional logo scaling</li>
+            <li>✓ Sticky positioning</li>
+            <li>✓ 2x header height = 80px final</li>
+            <li>✓ Smooth CSS transitions</li>
+            <li>✓ No aspect ratio distortion</li>
         </ul>
     </div>
+
+    <script>
+        // New scroll-based header shrinking effect
+        class ScrollHeaderEffect {
+            constructor() {
+                this.header = document.getElementById('scrollHeader');
+                this.headerInner = document.getElementById('scrollHeaderInner');
+                this.logoContainer = document.getElementById('scrollLogoContainer');
+                this.logo = document.getElementById('scrollLogo');
+                this.debugPanel = document.getElementById('scrollDebug');
+                
+                // Configuration
+                this.initialHeaderHeight = null;
+                this.finalHeaderHeight = 80;
+                this.scrollMultiplier = 2; // 滾動2倍高度完成縮小
+                
+                this.init();
+            }
+            
+            init() {
+                // Calculate initial header height
+                this.calculateInitialHeight();
+                
+                // Set initial styles
+                this.setInitialStyles();
+                
+                // Bind scroll listener
+                window.addEventListener('scroll', () => this.handleScroll());
+                window.addEventListener('resize', () => this.handleResize());
+                
+                console.log('ScrollHeaderEffect initialized');
+            }
+            
+            calculateInitialHeight() {
+                // Calculate based on viewport and content
+                const viewportHeight = window.innerHeight;
+                const viewportWidth = window.innerWidth;
+                
+                // Use 5vh for desktop, 8vh for mobile as base padding
+                const isMobile = viewportWidth <= 768;
+                const basePadding = isMobile ? viewportHeight * 0.08 : viewportHeight * 0.05;
+                
+                // Logo dimensions calculation
+                const logoWidth = isMobile ? viewportWidth * 0.95 : viewportWidth * 0.9;
+                const logoMaxHeight = 248;
+                
+                // Calculate logo height based on aspect ratio (1152x122 = 0.1059)
+                const logoAspectRatio = 122 / 1152;
+                const calculatedLogoHeight = Math.min(logoWidth * logoAspectRatio, logoMaxHeight);
+                
+                // Total header height = padding top + logo height + padding bottom
+                this.initialHeaderHeight = (basePadding * 2) + calculatedLogoHeight;
+                
+                console.log('Initial header height:', this.initialHeaderHeight);
+            }
+            
+            setInitialStyles() {
+                const viewportWidth = window.innerWidth;
+                const isMobile = viewportWidth <= 768;
+                
+                // Set header height
+                this.header.style.height = this.initialHeaderHeight + 'px';
+                
+                // Set logo container width
+                const logoWidth = isMobile ? viewportWidth * 0.95 : viewportWidth * 0.9;
+                this.logoContainer.style.width = logoWidth + 'px';
+                
+                // Set logo max height
+                this.logo.style.maxHeight = '248px';
+                this.logo.style.width = '100%';
+            }
+            
+            handleScroll() {
+                const scrollY = window.scrollY;
+                const maxScrollDistance = this.initialHeaderHeight * this.scrollMultiplier;
+                
+                // Calculate progress (0 to 1)
+                let progress = Math.min(scrollY / maxScrollDistance, 1);
+                
+                // Apply easing for smoother effect
+                progress = this.easeOutCubic(progress);
+                
+                // Calculate current header height
+                const currentHeight = this.initialHeaderHeight - (
+                    (this.initialHeaderHeight - this.finalHeaderHeight) * progress
+                );
+                
+                // Apply transformations
+                this.applyScrollTransform(progress, currentHeight);
+                
+                // Update debug info
+                this.updateDebugInfo(scrollY, progress, currentHeight);
+            }
+            
+            applyScrollTransform(progress, currentHeight) {
+                // Update header height
+                this.header.style.height = currentHeight + 'px';
+                
+                // Scale logo container proportionally
+                const scale = currentHeight / this.initialHeaderHeight;
+                const viewportWidth = window.innerWidth;
+                const isMobile = viewportWidth <= 768;
+                const initialLogoWidth = isMobile ? viewportWidth * 0.95 : viewportWidth * 0.9;
+                const currentLogoWidth = initialLogoWidth * scale;
+                
+                this.logoContainer.style.width = currentLogoWidth + 'px';
+                
+                // Update logo max height proportionally
+                const currentLogoMaxHeight = 248 * scale;
+                this.logo.style.maxHeight = currentLogoMaxHeight + 'px';
+            }
+            
+            handleResize() {
+                // Recalculate on resize
+                this.calculateInitialHeight();
+                this.setInitialStyles();
+                this.handleScroll(); // Re-apply current scroll position
+            }
+            
+            easeOutCubic(t) {
+                return 1 - Math.pow(1 - t, 3);
+            }
+            
+            updateDebugInfo(scrollY, progress, currentHeight) {
+                if (this.debugPanel) {
+                    this.debugPanel.innerHTML = `
+                        Scroll: ${Math.round(scrollY)}px<br>
+                        Progress: ${Math.round(progress * 100)}%<br>
+                        Header Height: ${Math.round(currentHeight)}px
+                    `;
+                }
+            }
+        }
+        
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            new ScrollHeaderEffect();
+        });
+    </script>
 </body>
 </html>
