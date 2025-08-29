@@ -1,88 +1,124 @@
-#main-header {
-    position: sticky !important;
+/* LikeSunny Header Animation CSS */
+
+/* 重置樣式 */
+#likesunny-animation-header * { 
+    margin: 0; 
+    padding: 0; 
+    box-sizing: border-box; 
+}
+
+/* 動畫 Header 容器 */
+#likesunny-animation-header {
+    position: fixed;
     top: 0;
+    left: 0;
+    width: 100%;
     z-index: 999999;
-    transition: padding 2000ms cubic-bezier(0.23, 1, 0.32, 1);
-    background: #fff;
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    height: auto !important; /* 高度自適應 */
+    overflow: visible !important; /* 允許內容顯示 */
+    display: none; /* 預設隱藏，由 JS 控制顯示 */
 }
 
-#logo {
-    position: relative;
-    transition: all 2500ms cubic-bezier(0.23, 1, 0.32, 1);
-    will-change: width;
-    backface-visibility: hidden;
-    transform: translateZ(0);
+/* 當 JS 決定顯示時 */
+#likesunny-animation-header[style*="display: block"] {
+    display: block !important;
 }
 
-#logo img {
-    transition: all 2500ms cubic-bezier(0.23, 1, 0.32, 1);
-    max-height: none !important;
-    height: auto !important;
-    will-change: transform, opacity, width;
-    backface-visibility: hidden;
-    transform: translateZ(0);
+/* Header 包裝器 */
+#likesunny-animation-header .likesunny-header-wrap {
+    background: #fff !important;
+    padding: 5vh 0 !important; /* 使用視窗高度的百分比 */
+    transition: opacity 0.6s ease, padding 2s ease-out !important;
+    box-shadow: 0px 4px 18px -6px rgba(0,0,0,0.3) !important;
 }
 
-#logo::after {
-    content: "";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 212px;
-    height: auto;
-    background-image: url('https://likesunny.com/wp-content/uploads/2025/07/【曉日制作】標誌組合_G3.svg');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    opacity: 0;
-    transition: opacity 800ms ease-in-out;
-    pointer-events: none;
-    z-index: 10;
-    min-height: 60px;
+#likesunny-animation-header .likesunny-header-wrap.shrunken { 
+    padding: 24px 0 !important; 
 }
 
-.et_mobile_menu, #et-top-navigation {
-    opacity: 0;
-    transition: opacity 800ms ease-in-out;
-    pointer-events: none;
+#likesunny-animation-header .likesunny-header-wrap.hidden { 
+    opacity: 0 !important; 
+    pointer-events: none !important; 
 }
 
-.home #main-header { padding: 50px 0 !important; }
-
-.home #logo img {
-    width: 80vw !important;
+/* 內容包裝器 */
+#likesunny-animation-header .likesunny-outer-content-wrap {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    margin: 0 auto !important;
+    padding: 0 20px !important;
     max-width: none !important;
     height: auto !important;
-}
-
-.home #logo img[src*="Logo_eng.svg"] { 
-    filter: brightness(0) saturate(100%) invert(46%) sepia(9%) saturate(462%) hue-rotate(64deg) brightness(95%) contrast(91%); 
-}
-
-.logo-animated #main-header { padding: 20px 0 !important; }
-
-.logo-animated #logo img {
-    width: 212px !important;
-    opacity: 0;
-}
-
-.logo-animated #logo::after {
-    opacity: 1;
-    pointer-events: auto;
-}
-
-.logo-animated .et_mobile_menu, .logo-animated #et-top-navigation {
-    opacity: 1;
-    pointer-events: auto;
-}
-
-@media (max-width: 768px) {
-    .home #logo img { width: 90vw !important; }
-    .logo-animated #logo::after { width: 180px; }
-}
-
-.et-fixed-header #logo, .et-fixed-header #logo img {
     max-height: none !important;
-    height: auto !important;
+}
+
+/* Logo 欄位 */
+#likesunny-animation-header .likesunny-logo-column {
+    position: relative !important;
+    width: 90vw !important; /* 使用視窗寬度的90% */
+    transition: width 2s ease-out !important;
+    will-change: width !important;
+    backface-visibility: hidden !important;
+    transform: translateZ(0) !important;
+}
+
+#likesunny-animation-header .likesunny-logo-column.shrink { 
+    width: 302px !important; 
+}
+
+/* Logo 圖片 */
+#likesunny-animation-header .likesunny-logo-column img {
+    display: block !important;
+    width: 100% !important;
+    height: auto !important; /* 高度自動，保持比例 */
+    margin: 0 auto !important;
+    transition: opacity 0.6s ease !important;
+    will-change: transform, opacity !important;
+    backface-visibility: hidden !important;
+    transform: translateZ(0) !important;
+    object-fit: contain !important;
+}
+
+#likesunny-animation-header .likesunny-logo-column img.likesunny-logo-main {
+    filter: brightness(0) saturate(100%) invert(46%) sepia(9%) saturate(462%) hue-rotate(64deg) brightness(95%) contrast(91%) !important;
+}
+
+/* 原有 header 一直保持顯示，只是在我們動畫 header 下方 */
+
+/* 隱藏動畫 header */
+.likesunny-animation-complete #likesunny-animation-header {
+    display: none !important;
+    pointer-events: none !important;
+}
+
+/* 確保隱藏時不阻擋點擊 */
+#likesunny-animation-header[style*="display: none"] {
+    pointer-events: none !important;
+}
+
+/* 響應式設計 */
+@media (max-width: 768px) {
+    #likesunny-animation-header .likesunny-logo-column {
+        width: 95vw !important;
+    }
+    
+    #likesunny-animation-header .likesunny-logo-column.shrink { 
+        width: 250px !important; 
+    }
+    
+    #likesunny-animation-header .likesunny-header-wrap {
+        padding: 8vh 0 !important; /* 手機版使用視窗高度 */
+    }
+    
+    #likesunny-animation-header .likesunny-header-wrap.shrunken { 
+        padding: 27px 0 !important; /* 調整為80px總高度 */
+    }
+    
+    #likesunny-animation-header .likesunny-outer-content-wrap {
+        padding: 0 15px !important;
+    }
 }
