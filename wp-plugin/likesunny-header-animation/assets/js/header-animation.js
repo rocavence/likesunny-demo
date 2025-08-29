@@ -118,13 +118,13 @@
         // 獲取當前 header 實際高度
         const headerHeight = animationHeader.offsetHeight;
         
-        // 減去原生header高度（80px），避免內容被遮擋
-        const adjustedMargin = Math.max(0, headerHeight - 80);
+        // 使用 header 高度 + 32px 作為間距
+        const adjustedMargin = headerHeight + 32;
         
-        // 設置 main area 的 margin-top 為調整後的高度
+        // 設置 main area 的 margin-top
         mainArea.style.marginTop = adjustedMargin + 'px';
         
-        console.log(`LikeSunny: Updated main area margin-top to ${adjustedMargin}px (header: ${headerHeight}px - 80px)`);
+        console.log(`LikeSunny: Updated main area margin-top to ${adjustedMargin}px (header: ${headerHeight}px + 32px)`);
     }
     
     function triggerAnimation() {
@@ -151,15 +151,15 @@
         logoColumn.classList.add('shrink');
         header.classList.add('shrunken');
         
-        // 2秒後第一階段完成，et-main-area 應該與原生header對齊
+        // 2秒後第一階段完成，et-main-area 設為最終高度 + 32px
         setTimeout(() => {
             const mainArea = document.querySelector('#et-main-area');
             if (mainArea) {
-                // 最終狀態：縮小後的header高度 - 原生header高度 (80px)
+                // 最終狀態：縮小後的header高度 + 32px 間距
                 const finalHeaderHeight = 80; // 縮小後約80px高度
-                const adjustedMargin = Math.max(0, finalHeaderHeight - 80);
+                const adjustedMargin = finalHeaderHeight + 32;
                 mainArea.style.marginTop = adjustedMargin + 'px';
-                console.log(`LikeSunny: First animation phase complete, main area adjusted to ${adjustedMargin}px`);
+                console.log(`LikeSunny: First animation phase complete, main area adjusted to ${adjustedMargin}px (${finalHeaderHeight}px + 32px)`);
             }
         }, 2000);
         
