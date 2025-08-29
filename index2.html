@@ -184,8 +184,9 @@
             <h1>New Scroll-Based Header Effect</h1>
             <p>Scroll down to see the header shrink proportionally</p>
             <p>The logo maintains its aspect ratio while the header shrinks to 80px height</p>
-            <p>After fade out, the red native header (80px) becomes visible</p>
-            <p>Effect completes after scrolling approximately 2x the initial header height</p>
+            <p>During Phase 1, page scroll is hijacked - only header animation occurs</p>
+            <p>After header shrinks to 80px, normal scroll is restored</p>
+            <p>Finally, the red native header (80px) becomes visible after fade out</p>
         </div>
         
         <div class="content-block">
@@ -214,11 +215,11 @@
     <div class="demo-info">
         <h3>New Scroll Effect Demo</h3>
         <ul>
-            <li>✓ Phase 1: Shrinking (no reverse)</li>
+            <li>✓ Phase 1: Scroll hijacking (no page scroll)</li>
             <li>✓ Phase 2: Header fade out</li>
-            <li>✓ Logo vertical centering</li>
+            <li>✓ Virtual scroll accumulation</li>
             <li>✓ Native header underneath (red)</li>
-            <li>✓ 80px height fixed positioning</li>
+            <li>✓ Normal scroll restored after Phase 1</li>
             <li>✓ Progress tracking (max reached)</li>
             <li>✓ Smooth CSS transitions</li>
             <li>🔴 Red native header visible after fade</li>
@@ -244,6 +245,8 @@
                 // Two-phase animation state
                 this.phase1Complete = false; // 第一階段：縮小（不可逆）
                 this.maxProgressReached = 0; // 記錄到達過的最大進度
+                this.scrollHijacked = false; // 滾動劫持狀態
+                this.accumulatedScroll = 0; // 累積的虛擬滾動量
                 
                 this.init();
             }
@@ -258,8 +261,10 @@
                 // Set initial styles
                 this.setInitialStyles();
                 
-                // Bind scroll listener
-                window.addEventListener('scroll', () => this.handleScroll());
+                // Enable scroll hijacking for phase 1
+                this.enableScrollHijacking();
+                
+                // Bind resize listener
                 window.addEventListener('resize', () => this.handleResize());
                 
                 console.log('ScrollHeaderEffect initialized, scroll reset to 0');
@@ -304,12 +309,60 @@
                 this.logo.style.width = '100%';
             }
             
-            handleScroll() {
-                const scrollY = window.scrollY;
+            enableScrollHijacking() {
+                this.scrollHijacked = true;
+                
+                // 防止頁面實際滾動
+                document.body.style.overflow = 'hidden';
+                
+                // 監聽滾輪事件來控制動畫
+                this.wheelHandler = (e) => {
+                    if (!this.scrollHijacked) return;
+                    
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    // 累積虛擬滾動量
+                    const scrollDelta = Math.abs(e.deltaY);
+                    this.accumulatedScroll += scrollDelta;
+                    
+                    // 處理動畫邏輯
+                    this.handleHijackedScroll();
+                    
+                    return false;
+                };
+                
+                // 添加滾輪監聽器
+                window.addEventListener('wheel', this.wheelHandler, { passive: false });
+                window.addEventListener('touchmove', this.touchMoveHandler = (e) => {
+                    if (this.scrollHijacked) {
+                        e.preventDefault();
+                    }
+                }, { passive: false });
+                
+                console.log('Scroll hijacking enabled');
+            }
+            
+            disableScrollHijacking() {
+                this.scrollHijacked = false;
+                document.body.style.overflow = '';
+                
+                // 移除滾輪監聽器
+                if (this.wheelHandler) {
+                    window.removeEventListener('wheel', this.wheelHandler);
+                }
+                if (this.touchMoveHandler) {
+                    window.removeEventListener('touchmove', this.touchMoveHandler);
+                }
+                
+                console.log('Scroll hijacking disabled, normal scroll restored');
+            }
+            
+            handleHijackedScroll() {
                 const maxScrollDistance = this.initialHeaderHeight * this.scrollMultiplier;
                 
-                // Calculate current progress (0 to 1)
-                let currentProgress = Math.min(scrollY / maxScrollDistance, 1);
+                // 計算虛擬滾動進度 (0 to 1)
+                let currentProgress = Math.min(this.accumulatedScroll / maxScrollDistance, 1);
                 
                 // Phase 1: Shrinking (no reverse) - 只向前，不允許逆轉
                 if (!this.phase1Complete) {
@@ -335,11 +388,12 @@
                     // Check if phase 1 is complete
                     if (this.maxProgressReached >= 1) {
                         this.phase1Complete = true;
-                        console.log('Phase 1 complete: Header shrunk to minimum size');
+                        this.disableScrollHijacking(); // 恢復正常滾動
+                        console.log('Phase 1 complete: Header shrunk to minimum size, scroll restored');
                     }
                     
                     // Update debug info for phase 1
-                    this.updateDebugInfo(scrollY, phase1Progress, currentHeight, 'Phase 1: Shrinking');
+                    this.updateDebugInfo(this.accumulatedScroll, phase1Progress, currentHeight, 'Phase 1: Hijacked');
                 } 
                 // Phase 2: Fade out - 當第一階段完成後
                 else {
@@ -349,7 +403,7 @@
                     }
                     
                     // Update debug info for phase 2
-                    this.updateDebugInfo(scrollY, 1, this.finalHeaderHeight, 'Phase 2: Fade Out');
+                    this.updateDebugInfo(0, 1, this.finalHeaderHeight, 'Phase 2: Fade Out');
                 }
             }
             
@@ -380,9 +434,13 @@
                 this.phase1Complete = false;
                 this.hasTriggeredFadeOut = false;
                 this.maxProgressReached = 0;
+                this.accumulatedScroll = 0;
                 this.header.classList.remove('fade-out');
                 
-                this.handleScroll(); // Re-apply current scroll position
+                // Re-enable scroll hijacking if needed
+                if (!this.scrollHijacked && !this.phase1Complete) {
+                    this.enableScrollHijacking();
+                }
             }
             
             triggerHeaderFadeOut() {
@@ -398,13 +456,14 @@
                 return 1 - Math.pow(1 - t, 3);
             }
             
-            updateDebugInfo(scrollY, progress, currentHeight, phase = '') {
+            updateDebugInfo(scrollValue, progress, currentHeight, phase = '') {
                 if (this.debugPanel) {
                     this.debugPanel.innerHTML = `
-                        Scroll: ${Math.round(scrollY)}px<br>
+                        ${this.scrollHijacked ? 'Virtual' : 'Real'} Scroll: ${Math.round(scrollValue)}px<br>
                         Progress: ${Math.round(progress * 100)}%<br>
                         Header Height: ${Math.round(currentHeight)}px<br>
                         Max Reached: ${Math.round(this.maxProgressReached * 100)}%<br>
+                        Hijacked: ${this.scrollHijacked ? 'Yes' : 'No'}<br>
                         ${phase}<br>
                         Fade Out: ${this.hasTriggeredFadeOut ? 'Yes' : 'No'}
                     `;
