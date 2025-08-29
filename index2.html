@@ -190,11 +190,11 @@
     <div class="demo-info">
         <h3>New Scroll Effect Demo</h3>
         <ul>
-            <li>✓ Scroll-based header shrinking</li>
-            <li>✓ Proportional logo scaling</li>
+            <li>✓ Phase 1: Shrinking (no reverse)</li>
+            <li>✓ Phase 2: Header fade out</li>
             <li>✓ Logo vertical centering</li>
             <li>✓ 2x header height = 80px final</li>
-            <li>✓ 2-second header fade out</li>
+            <li>✓ Progress tracking (max reached)</li>
             <li>✓ Smooth CSS transitions</li>
             <li>✓ No aspect ratio distortion</li>
         </ul>
@@ -215,6 +215,10 @@
                 this.finalHeaderHeight = 80;
                 this.scrollMultiplier = 2; // 滾動2倍高度完成縮小
                 this.hasTriggeredFadeOut = false;
+                
+                // Two-phase animation state
+                this.phase1Complete = false; // 第一階段：縮小（不可逆）
+                this.maxProgressReached = 0; // 記錄到達過的最大進度
                 
                 this.init();
             }
@@ -276,27 +280,49 @@
                 const scrollY = window.scrollY;
                 const maxScrollDistance = this.initialHeaderHeight * this.scrollMultiplier;
                 
-                // Calculate progress (0 to 1)
-                let progress = Math.min(scrollY / maxScrollDistance, 1);
+                // Calculate current progress (0 to 1)
+                let currentProgress = Math.min(scrollY / maxScrollDistance, 1);
                 
-                // Apply easing for smoother effect
-                progress = this.easeOutCubic(progress);
-                
-                // Calculate current header height
-                const currentHeight = this.initialHeaderHeight - (
-                    (this.initialHeaderHeight - this.finalHeaderHeight) * progress
-                );
-                
-                // Apply transformations
-                this.applyScrollTransform(progress, currentHeight);
-                
-                // Check if we need to trigger fade out
-                if (progress >= 1 && !this.hasTriggeredFadeOut) {
-                    this.triggerLogoFadeOut();
+                // Phase 1: Shrinking (no reverse) - 只向前，不允許逆轉
+                if (!this.phase1Complete) {
+                    // 只允許進度向前，不允許倒退
+                    if (currentProgress > this.maxProgressReached) {
+                        this.maxProgressReached = currentProgress;
+                    }
+                    
+                    // 使用到達過的最大進度
+                    let phase1Progress = this.maxProgressReached;
+                    
+                    // Apply easing for smoother effect
+                    phase1Progress = this.easeOutCubic(phase1Progress);
+                    
+                    // Calculate current header height
+                    const currentHeight = this.initialHeaderHeight - (
+                        (this.initialHeaderHeight - this.finalHeaderHeight) * phase1Progress
+                    );
+                    
+                    // Apply transformations
+                    this.applyScrollTransform(phase1Progress, currentHeight);
+                    
+                    // Check if phase 1 is complete
+                    if (this.maxProgressReached >= 1) {
+                        this.phase1Complete = true;
+                        console.log('Phase 1 complete: Header shrunk to minimum size');
+                    }
+                    
+                    // Update debug info for phase 1
+                    this.updateDebugInfo(scrollY, phase1Progress, currentHeight, 'Phase 1: Shrinking');
+                } 
+                // Phase 2: Fade out - 當第一階段完成後
+                else {
+                    // 第一階段已完成，現在處理淡出
+                    if (!this.hasTriggeredFadeOut) {
+                        this.triggerHeaderFadeOut();
+                    }
+                    
+                    // Update debug info for phase 2
+                    this.updateDebugInfo(scrollY, 1, this.finalHeaderHeight, 'Phase 2: Fade Out');
                 }
-                
-                // Update debug info
-                this.updateDebugInfo(scrollY, progress, currentHeight);
             }
             
             applyScrollTransform(progress, currentHeight) {
@@ -322,20 +348,16 @@
                 this.calculateInitialHeight();
                 this.setInitialStyles();
                 
-                // Reset fade out state if we're back to smaller screen
-                const scrollY = window.scrollY;
-                const maxScrollDistance = this.initialHeaderHeight * this.scrollMultiplier;
-                const progress = Math.min(scrollY / maxScrollDistance, 1);
-                
-                if (progress < 1) {
-                    this.hasTriggeredFadeOut = false;
-                    this.header.classList.remove('fade-out');
-                }
+                // Reset animation state on resize
+                this.phase1Complete = false;
+                this.hasTriggeredFadeOut = false;
+                this.maxProgressReached = 0;
+                this.header.classList.remove('fade-out');
                 
                 this.handleScroll(); // Re-apply current scroll position
             }
             
-            triggerLogoFadeOut() {
+            triggerHeaderFadeOut() {
                 this.hasTriggeredFadeOut = true;
                 
                 // Add fade out class to header to trigger 2-second fade out animation
@@ -348,12 +370,14 @@
                 return 1 - Math.pow(1 - t, 3);
             }
             
-            updateDebugInfo(scrollY, progress, currentHeight) {
+            updateDebugInfo(scrollY, progress, currentHeight, phase = '') {
                 if (this.debugPanel) {
                     this.debugPanel.innerHTML = `
                         Scroll: ${Math.round(scrollY)}px<br>
                         Progress: ${Math.round(progress * 100)}%<br>
                         Header Height: ${Math.round(currentHeight)}px<br>
+                        Max Reached: ${Math.round(this.maxProgressReached * 100)}%<br>
+                        ${phase}<br>
                         Fade Out: ${this.hasTriggeredFadeOut ? 'Yes' : 'No'}
                     `;
                 }
