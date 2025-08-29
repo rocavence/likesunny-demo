@@ -7,8 +7,9 @@
     box-sizing: border-box; 
 }
 
-/* 動畫 Header 容器 */
-#likesunny-animation-header {
+/* 動畫 Header 容器 - 只在首頁顯示 */
+body.home #likesunny-animation-header,
+body.front-page #likesunny-animation-header {
     position: fixed;
     top: 0;
     left: 0;
@@ -21,8 +22,14 @@
     display: none; /* 預設隱藏，由 JS 控制顯示 */
 }
 
-/* 當 JS 決定顯示時 */
-#likesunny-animation-header[style*="display: block"] {
+/* 非首頁隱藏動畫header */
+#likesunny-animation-header {
+    display: none !important;
+}
+
+/* 當 JS 決定顯示時 - 只在首頁有效 */
+body.home #likesunny-animation-header[style*="display: block"],
+body.front-page #likesunny-animation-header[style*="display: block"] {
     display: block !important;
 }
 

@@ -13,6 +13,15 @@
     });
     
     function initHeaderAnimation() {
+        // 檢查是否在首頁（通過body class判斷）
+        const isHomePage = document.body.classList.contains('home') || 
+                          document.body.classList.contains('front-page');
+        
+        if (!isHomePage) {
+            console.log('LikeSunny: Not on home page, skipping animation');
+            return;
+        }
+        
         // 確保動畫元素存在
         const animationHeader = document.querySelector('#likesunny-animation-header');
         if (!animationHeader) {

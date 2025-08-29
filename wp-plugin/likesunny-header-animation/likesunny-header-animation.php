@@ -40,10 +40,6 @@ class LikeSunnyHeaderAnimation {
      * 在 head 早期添加樣式，確保層級順序
      */
     public function add_early_styles() {
-        // 只在首頁顯示動畫
-        if (!is_home()) {
-            return;
-        }
         ?>
         <style id="likesunny-header-layer">
         /* 保持原有 header 正常顯示，但在我們的動畫 header 下方 */
@@ -63,8 +59,9 @@ class LikeSunnyHeaderAnimation {
             z-index: 999999 !important;
         }
         
-        /* et-main-area 跟隨動畫 header 高度變化（由JavaScript控制） */
-        #et-main-area {
+        /* et-main-area 跟隨動畫 header 高度變化（由JavaScript控制） - 只在首頁 */
+        body.home #et-main-area,
+        body.front-page #et-main-area {
             transition: margin-top 0.3s ease-out !important;
         }
         </style>
@@ -75,10 +72,6 @@ class LikeSunnyHeaderAnimation {
      * 載入 CSS 和 JS 檔案
      */
     public function enqueue_assets() {
-        // 只在首頁顯示動畫
-        if (!is_home()) {
-            return;
-        }
         wp_enqueue_style(
             'likesunny-header-animation-css',
             LIKESUNNY_HEADER_ANIMATION_URL . 'assets/css/header-animation.css',
@@ -110,10 +103,6 @@ class LikeSunnyHeaderAnimation {
      * 在 footer 添加動畫 HTML
      */
     public function add_animation_html() {
-        // 只在首頁顯示動畫
-        if (!is_home()) {
-            return;
-        }
         ?>
         <div id="likesunny-animation-header" style="display: none;">
             <div class="likesunny-header-wrap">
