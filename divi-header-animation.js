@@ -30,6 +30,9 @@
         // 標記動畫已顯示
         markAnimationShown();
         
+        // 初始化 main area 推送（demo使用.hero-section）
+        initMainAreaPush();
+        
         // 3秒後自動開始動畫（如果沒有被滾動觸發）
         setTimeout(() => {
             if (!hasTriggered && !isAnimating) {
@@ -44,6 +47,73 @@
     
     function markAnimationShown() {
         sessionStorage.setItem('likesunny_animation_shown', 'true');
+    }
+    
+    function initMainAreaPush() {
+        // Demo版本使用.hero-section替代#et-main-area
+        const mainArea = document.querySelector('.hero-section');
+        if (!mainArea) {
+            console.log('LikeSunny: hero-section not found, skipping push functionality');
+            return;
+        }
+        
+        // 開始實時高度監控
+        startHeightMonitoring();
+    }
+    
+    function startHeightMonitoring() {
+        const animationHeader = document.querySelector('#likesunny-animation-header');
+        const mainArea = document.querySelector('.hero-section');
+        
+        if (!animationHeader || !mainArea) return;
+        
+        // 使用 ResizeObserver 監控 header 高度變化
+        const resizeObserver = new ResizeObserver(() => {
+            updateMainAreaPosition();
+        });
+        
+        resizeObserver.observe(animationHeader);
+        
+        // 初始設置
+        updateMainAreaPosition();
+        
+        // 監控動畫狀態，第一階段完成後停止監控
+        let monitoringActive = true;
+        
+        const checkPhase = setInterval(() => {
+            const header = document.querySelector('.likesunny-header-wrap');
+            if (header && header.classList.contains('shrunken') && monitoringActive) {
+                // 等待2秒讓縮小動畫完成
+                setTimeout(() => {
+                    resizeObserver.disconnect();
+                    monitoringActive = false;
+                    clearInterval(checkPhase);
+                    console.log('LikeSunny: Stopped height monitoring after first phase');
+                }, 2000);
+            }
+            
+            // 備用：完全動畫完成時也停止監控
+            if (document.body.classList.contains('likesunny-animation-complete')) {
+                resizeObserver.disconnect();
+                monitoringActive = false;
+                clearInterval(checkPhase);
+            }
+        }, 100);
+    }
+    
+    function updateMainAreaPosition() {
+        const animationHeader = document.querySelector('#likesunny-animation-header');
+        const mainArea = document.querySelector('.hero-section');
+        
+        if (!animationHeader || !mainArea) return;
+        
+        // 獲取當前 header 實際高度
+        const headerHeight = animationHeader.offsetHeight;
+        
+        // 設置 main area 的 margin-top 為當前 header 高度
+        mainArea.style.marginTop = headerHeight + 'px';
+        
+        console.log(`LikeSunny: Updated hero-section margin-top to ${headerHeight}px`);
     }
     
     function triggerAnimation() {
@@ -69,6 +139,15 @@
         // 第一階段：縮小 logo
         logoColumn.classList.add('shrink');
         header.classList.add('shrunken');
+        
+        // 2秒後第一階段完成，hero-section 應該回到 0 位置
+        setTimeout(() => {
+            const mainArea = document.querySelector('.hero-section');
+            if (mainArea) {
+                mainArea.style.marginTop = '0px';
+                console.log('LikeSunny: First animation phase complete, hero-section reset to 0');
+            }
+        }, 2000);
         
         // 第二階段：3秒後隱藏 header，顯示原有 header
         setTimeout(() => {
