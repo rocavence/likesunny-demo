@@ -104,7 +104,7 @@
     }
     
     function handleScroll() {
-        if (!hasTriggered && !isAnimating && window.scrollY > 320) {
+        if (!hasTriggered && !isAnimating && window.scrollY > 80) {
             triggerAnimation();
         }
     }
