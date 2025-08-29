@@ -118,13 +118,13 @@
         // 獲取當前 header 實際高度
         const headerHeight = animationHeader.offsetHeight;
         
-        // 使用 header 高度 + 32px 作為間距
-        const adjustedMargin = headerHeight + 32;
+        // 使用 header 高度 + 32px - 80px 作為間距
+        const adjustedMargin = Math.max(0, headerHeight + 32 - 80);
         
         // 設置 main area 的 margin-top
         mainArea.style.marginTop = adjustedMargin + 'px';
         
-        console.log(`LikeSunny: Updated main area margin-top to ${adjustedMargin}px (header: ${headerHeight}px + 32px)`);
+        console.log(`LikeSunny: Updated main area margin-top to ${adjustedMargin}px (header: ${headerHeight}px + 32px - 80px)`);
     }
     
     function triggerAnimation() {
@@ -155,11 +155,11 @@
         setTimeout(() => {
             const mainArea = document.querySelector('#et-main-area');
             if (mainArea) {
-                // 最終狀態：縮小後的header高度 + 32px 間距
+                // 最終狀態：縮小後的header高度 + 32px - 80px
                 const finalHeaderHeight = 80; // 縮小後約80px高度
-                const adjustedMargin = finalHeaderHeight + 32;
+                const adjustedMargin = Math.max(0, finalHeaderHeight + 32 - 80);
                 mainArea.style.marginTop = adjustedMargin + 'px';
-                console.log(`LikeSunny: First animation phase complete, main area adjusted to ${adjustedMargin}px (${finalHeaderHeight}px + 32px)`);
+                console.log(`LikeSunny: First animation phase complete, main area adjusted to ${adjustedMargin}px (${finalHeaderHeight}px + 32px - 80px)`);
             }
         }, 2000);
         
