@@ -249,6 +249,9 @@
             }
             
             init() {
+                // Reset scroll position to prevent browser restore behavior
+                window.scrollTo(0, 0);
+                
                 // Calculate initial header height
                 this.calculateInitialHeight();
                 
@@ -259,7 +262,7 @@
                 window.addEventListener('scroll', () => this.handleScroll());
                 window.addEventListener('resize', () => this.handleResize());
                 
-                console.log('ScrollHeaderEffect initialized');
+                console.log('ScrollHeaderEffect initialized, scroll reset to 0');
             }
             
             calculateInitialHeight() {
@@ -409,9 +412,21 @@
             }
         }
         
+        // Reset scroll position immediately
+        if (window.history.scrollRestoration) {
+            window.history.scrollRestoration = 'manual';
+        }
+        
         // Initialize when DOM is loaded
         document.addEventListener('DOMContentLoaded', function() {
+            // Additional scroll reset
+            window.scrollTo(0, 0);
             new ScrollHeaderEffect();
+        });
+        
+        // Backup reset on window load
+        window.addEventListener('load', function() {
+            window.scrollTo(0, 0);
         });
     </script>
 </body>
