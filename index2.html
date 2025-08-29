@@ -35,18 +35,26 @@
             align-items: center;
             justify-content: center;
             padding: 0 20px;
+            height: 100%;
             transition: all 0.3s ease-out;
         }
         
         .scroll-logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
             transition: all 0.3s ease-out;
         }
         
         .scroll-logo {
             display: block;
             height: auto;
-            transition: all 0.3s ease-out;
+            transition: all 0.3s ease-out, opacity 2s ease-out;
             object-fit: contain;
+        }
+        
+        .scroll-logo.fade-out {
+            opacity: 0;
         }
         
         .scroll-logo-main {
@@ -183,8 +191,9 @@
         <ul>
             <li>✓ Scroll-based header shrinking</li>
             <li>✓ Proportional logo scaling</li>
-            <li>✓ Sticky positioning</li>
+            <li>✓ Logo vertical centering</li>
             <li>✓ 2x header height = 80px final</li>
+            <li>✓ 2-second logo fade out</li>
             <li>✓ Smooth CSS transitions</li>
             <li>✓ No aspect ratio distortion</li>
         </ul>
@@ -204,6 +213,7 @@
                 this.initialHeaderHeight = null;
                 this.finalHeaderHeight = 80;
                 this.scrollMultiplier = 2; // 滾動2倍高度完成縮小
+                this.hasTriggeredFadeOut = false;
                 
                 this.init();
             }
@@ -279,6 +289,11 @@
                 // Apply transformations
                 this.applyScrollTransform(progress, currentHeight);
                 
+                // Check if we need to trigger fade out
+                if (progress >= 1 && !this.hasTriggeredFadeOut) {
+                    this.triggerLogoFadeOut();
+                }
+                
                 // Update debug info
                 this.updateDebugInfo(scrollY, progress, currentHeight);
             }
@@ -305,7 +320,27 @@
                 // Recalculate on resize
                 this.calculateInitialHeight();
                 this.setInitialStyles();
+                
+                // Reset fade out state if we're back to smaller screen
+                const scrollY = window.scrollY;
+                const maxScrollDistance = this.initialHeaderHeight * this.scrollMultiplier;
+                const progress = Math.min(scrollY / maxScrollDistance, 1);
+                
+                if (progress < 1) {
+                    this.hasTriggeredFadeOut = false;
+                    this.logo.classList.remove('fade-out');
+                }
+                
                 this.handleScroll(); // Re-apply current scroll position
+            }
+            
+            triggerLogoFadeOut() {
+                this.hasTriggeredFadeOut = true;
+                
+                // Add fade out class to trigger 2-second fade out animation
+                this.logo.classList.add('fade-out');
+                
+                console.log('Logo fade out triggered');
             }
             
             easeOutCubic(t) {
@@ -317,7 +352,8 @@
                     this.debugPanel.innerHTML = `
                         Scroll: ${Math.round(scrollY)}px<br>
                         Progress: ${Math.round(progress * 100)}%<br>
-                        Header Height: ${Math.round(currentHeight)}px
+                        Header Height: ${Math.round(currentHeight)}px<br>
+                        Fade Out: ${this.hasTriggeredFadeOut ? 'Yes' : 'No'}
                     `;
                 }
             }
